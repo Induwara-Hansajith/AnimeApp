@@ -25,7 +25,7 @@ db = client[os.environ['DB_NAME']]
 aio_jikan = AioJikan()
 
 # Rate limiter for Jikan API (3 per second, 60 per minute)
-rate_limiter = aiometer.create_limiter(max_per_second=3, max_per_minute=60)
+rate_limiter = aiometer.create_meter(max_per_second=3, max_per_minute=60)
 
 # Create the main app
 app = FastAPI(
