@@ -120,9 +120,16 @@ class UserStats(BaseModel):
 # Utility functions
 async def safe_jikan_request(coro):
     """Wrapper for Jikan API requests with rate limiting and error handling"""
+    global last_request_time
     try:
-        async with rate_limiter:
-            return await coro
+        # Simple rate limiting
+        current_time = time.time()
+        time_since_last = current_time - last_request_time
+        if time_since_last < request_interval:
+            await asyncio.sleep(request_interval - time_since_last)
+        
+        last_request_time = time.time()
+        return await coro
     except Exception as e:
         logging.error(f"Jikan API error: {str(e)}")
         raise HTTPException(status_code=503, detail=f"External API error: {str(e)}")
