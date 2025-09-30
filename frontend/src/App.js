@@ -1,53 +1,38 @@
-import { useEffect } from "react";
+import React, { useState } from "react";
 import "@/App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
-
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
-
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
+import HomePage from "@/pages/HomePage";
+import SearchPage from "@/pages/SearchPage";
+import AnimeDetailsPage from "@/pages/AnimeDetailsPage";
+import WatchlistPage from "@/pages/WatchlistPage";
+import SeasonalPage from "@/pages/SeasonalPage";
+import StatsPage from "@/pages/StatsPage";
+import Navigation from "@/components/Navigation";
+import { UserProvider } from "@/context/UserContext";
+import { Toaster } from "@/components/ui/sonner";
 
 function App() {
+  const [currentUser] = useState("user123"); // Simple user simulation
+
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <UserProvider value={currentUser}>
+      <div className="App min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <BrowserRouter>
+          <Navigation />
+          <main className="container mx-auto px-4 py-8">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/anime/:id" element={<AnimeDetailsPage />} />
+              <Route path="/watchlist" element={<WatchlistPage />} />
+              <Route path="/seasonal" element={<SeasonalPage />} />
+              <Route path="/stats" element={<StatsPage />} />
+            </Routes>
+          </main>
+          <Toaster />
+        </BrowserRouter>
+      </div>
+    </UserProvider>
   );
 }
 
